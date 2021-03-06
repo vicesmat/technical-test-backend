@@ -4,6 +4,6 @@ import java.math.BigDecimal;
 
 public interface PaymentService {
 	
-    void charge(BigDecimal amount);
+    public void charge(BigDecimal amount);
     
 }

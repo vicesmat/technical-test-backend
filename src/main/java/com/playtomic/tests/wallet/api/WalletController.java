@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.playtomic.tests.wallet.api.dto.OperationDto;
 import com.playtomic.tests.wallet.api.dto.WalletDto;
-import com.playtomic.tests.wallet.service.OperationService;
 import com.playtomic.tests.wallet.service.WalletService;
 
 @RestController
@@ -34,9 +33,6 @@ public class WalletController {
     
     @Autowired
     WalletService walletService;
-    
-    @Autowired
-    OperationService operationService;
     
     @GetMapping("/{id}")
     WalletDto getWalletById(@PathVariable @NotNull Long id) {
@@ -51,7 +47,7 @@ public class WalletController {
     
     @PostMapping("/{id}/payments")
     WalletDto charge(@PathVariable @NotNull Long id, @RequestBody @Valid OperationDto operation) {
-    	WalletDto walletDto = operationService.charge(id, operation.getAmount());
+    	WalletDto walletDto = walletService.charge(id, operation.getAmount());
 
     	walletDto.add(getPaymentLink(id, true));
     	walletDto.add(getWalletLink(id, false));
@@ -61,7 +57,7 @@ public class WalletController {
     
     @PostMapping("/{id}/top-ups")
     WalletDto recharge(@PathVariable @NotNull Long id, @RequestBody @Valid OperationDto operation) {
-    	WalletDto walletDto = operationService.recharge(id, operation.getAmount());
+    	WalletDto walletDto = walletService.recharge(id, operation.getAmount());
     	
     	walletDto.add(getTopupLink(id, true));
     	walletDto.add(getWalletLink(id, false));
