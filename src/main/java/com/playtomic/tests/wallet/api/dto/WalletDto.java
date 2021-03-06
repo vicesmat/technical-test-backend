@@ -5,20 +5,22 @@ import java.math.BigDecimal;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-public class WalletDto {
+import org.springframework.hateoas.ResourceSupport;
+
+public class WalletDto extends ResourceSupport  {
 
 	@NotNull
-    private Long id;
+    private Long walletId;
     @NotNull
 	@Min(0)
     private BigDecimal balance;
     
-	public Long getId() {
-		return id;
+	public Long getWalletId() {
+		return walletId;
 	}
 	
-	public void setId(Long id) {
-		this.id = id;
+	public void setWalletId(Long walletId) {
+		this.walletId = walletId;
 	}
 	
 	public BigDecimal getBalance() {

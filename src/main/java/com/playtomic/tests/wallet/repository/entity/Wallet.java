@@ -10,6 +10,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.hateoas.ResourceSupport;
+
 @Entity
 @Table(name = "wallet")
 public class Wallet {

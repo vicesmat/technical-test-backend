@@ -1,10 +1,17 @@
 package com.playtomic.tests.wallet.api;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.config.EnableHypermediaSupport;
+import org.springframework.hateoas.config.EnableHypermediaSupport.HypermediaType;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +26,7 @@ import com.playtomic.tests.wallet.service.WalletService;
 
 @RestController
 @RequestMapping("/wallets")
+@EnableHypermediaSupport(type = HypermediaType.HAL)
 public class WalletController {
 	
     private Logger log = LoggerFactory.getLogger(WalletController.class);
@@ -31,17 +39,48 @@ public class WalletController {
     
     @GetMapping("/{id}")
     WalletDto getWalletById(@PathVariable Long id) {
-        return walletService.getWalletById(id);
+    	WalletDto walletDto = walletService.getWalletById(id);
+    	
+    	walletDto.add(getWalletLink(id, true));
+    	walletDto.add(getPaymentLink(id, false));
+    	walletDto.add(getTopupLink(id, false));
+    	
+    	return walletDto;
     }
     
     @PostMapping("/{id}/payments")
-    void charge(@PathVariable Long id, @Valid @RequestBody OperationDto operation) {
-    	operationService.charge(id, operation.getAmount());
+    WalletDto charge(@PathVariable Long id, @RequestBody @Valid OperationDto operation) {
+    	WalletDto walletDto = operationService.charge(id, operation.getAmount());
+
+    	walletDto.add(getPaymentLink(id, true));
+    	walletDto.add(getWalletLink(id, false));
+    	
+    	return walletDto;
     }
     
     @PostMapping("/{id}/top-ups")
-    void recharge(@PathVariable Long id, @Valid @RequestBody OperationDto operation) {
-    	operationService.recharge(id, operation.getAmount());
+    WalletDto recharge(@PathVariable Long id, @RequestBody @Valid OperationDto operation) {
+    	WalletDto walletDto = operationService.recharge(id, operation.getAmount());
+    	
+    	walletDto.add(getTopupLink(id, true));
+    	walletDto.add(getWalletLink(id, false));
+    	
+    	return walletDto;
+    }
+    
+    private Link getWalletLink(Long id, boolean isSelf) {
+    	ControllerLinkBuilder builder = linkTo(methodOn(WalletController.class).getWalletById(id));
+    	return isSelf ? builder.withSelfRel() : builder.withRel("wallet");
+    }
+    
+    private Link getPaymentLink(Long id, boolean isSelf) {
+    	ControllerLinkBuilder builder = linkTo(methodOn(WalletController.class).charge(id, null));
+    	return isSelf ? builder.withSelfRel() : builder.withRel("payment");
+    }
+    
+    private Link getTopupLink(Long id, boolean isSelf) {
+    	ControllerLinkBuilder builder = linkTo(methodOn(WalletController.class).recharge(id, null));
+    	return isSelf ? builder.withSelfRel() : builder.withRel("top-up");
     }
     
 }

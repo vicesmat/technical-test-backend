@@ -2,10 +2,12 @@ package com.playtomic.tests.wallet.service;
 
 import java.math.BigDecimal;
 
+import com.playtomic.tests.wallet.api.dto.WalletDto;
+
 public interface OperationService {
 
-	public void charge(Long walletId, BigDecimal amount);
+	public WalletDto charge(Long walletId, BigDecimal amount);
 	
-	public void recharge(Long walletId, BigDecimal amount);
+	public WalletDto recharge(Long walletId, BigDecimal amount);
 	
 }
