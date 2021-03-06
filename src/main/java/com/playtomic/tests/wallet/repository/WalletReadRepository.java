@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.playtomic.tests.wallet.repository.entity.Wallet;
 
 @Repository
-public interface WalletRepository extends JpaRepository<Wallet, Long> {
+public interface WalletReadRepository extends JpaRepository<Wallet, Long> {
 	
 }

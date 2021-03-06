@@ -3,7 +3,6 @@ package com.playtomic.tests.wallet.service.impl;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import com.playtomic.tests.wallet.service.PaymentService;
