@@ -1,11 +1,12 @@
 package com.playtomic.tests.wallet.service.impl;
 
-import com.playtomic.tests.wallet.service.PaymentServiceException;
-import com.playtomic.tests.wallet.service.PaymentService;
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
+import com.playtomic.tests.wallet.service.PaymentService;
+import com.playtomic.tests.wallet.service.PaymentServiceException;
 
 
 /**
@@ -15,12 +16,16 @@ import java.math.BigDecimal;
  */
 @Service
 public class ThirdPartyPaymentService implements PaymentService {
+	
     private BigDecimal threshold = new BigDecimal(10);
 
     @Override
-    public void charge(BigDecimal amount) throws PaymentServiceException {
+    public void charge(BigDecimal amount) {
         if (amount.compareTo(threshold) < 0) {
-            throw new PaymentServiceException();
+        	String thresholdStr = NumberFormat.getCurrencyInstance().format(threshold);
+        	String message = String.format("We don't even bother to charge less than %s", thresholdStr);
+            throw new PaymentServiceException(message);
         }
     }
+    
 }

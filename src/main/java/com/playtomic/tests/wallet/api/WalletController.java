@@ -4,6 +4,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,7 @@ public class WalletController {
     OperationService operationService;
     
     @GetMapping("/{id}")
-    WalletDto getWalletById(@PathVariable Long id) {
+    WalletDto getWalletById(@PathVariable @NotNull Long id) {
     	WalletDto walletDto = walletService.getWalletById(id);
     	
     	walletDto.add(getWalletLink(id, true));
@@ -49,7 +50,7 @@ public class WalletController {
     }
     
     @PostMapping("/{id}/payments")
-    WalletDto charge(@PathVariable Long id, @RequestBody @Valid OperationDto operation) {
+    WalletDto charge(@PathVariable @NotNull Long id, @RequestBody @Valid OperationDto operation) {
     	WalletDto walletDto = operationService.charge(id, operation.getAmount());
 
     	walletDto.add(getPaymentLink(id, true));
@@ -59,7 +60,7 @@ public class WalletController {
     }
     
     @PostMapping("/{id}/top-ups")
-    WalletDto recharge(@PathVariable Long id, @RequestBody @Valid OperationDto operation) {
+    WalletDto recharge(@PathVariable @NotNull Long id, @RequestBody @Valid OperationDto operation) {
     	WalletDto walletDto = operationService.recharge(id, operation.getAmount());
     	
     	walletDto.add(getTopupLink(id, true));

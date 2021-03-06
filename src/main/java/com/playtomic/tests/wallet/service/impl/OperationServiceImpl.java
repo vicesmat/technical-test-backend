@@ -1,6 +1,7 @@
 package com.playtomic.tests.wallet.service.impl;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,20 +28,23 @@ public class OperationServiceImpl implements OperationService {
 	@Override
 	public WalletDto charge(Long walletId, BigDecimal amount) {
 		Wallet wallet = walletRepository.findOne(walletId);
-		wallet.setBalance(wallet.getBalance().subtract(amount));
-		return walletMapper.toDto(walletRepository.save(wallet));
+		BigDecimal newBalance = wallet.getBalance().subtract(amount);
+		if (newBalance.compareTo(new BigDecimal(0)) < 0) {
+        	String balanceStr = NumberFormat.getCurrencyInstance().format(wallet.getBalance());
+        	String message = String.format("You're living beyond your means, you only have  %s", balanceStr);
+            throw new PaymentServiceException(message);
+		} else {
+			wallet.setBalance(newBalance);
+			return walletMapper.toDto(walletRepository.save(wallet));
+		}
 	}
 
 	@Override
 	public WalletDto recharge(Long walletId, BigDecimal amount) {
-		try {
-			thirdPartyPaymentService.charge(amount);
-			Wallet wallet = walletRepository.findOne(walletId);
-			wallet.setBalance(wallet.getBalance().add(amount));
-			return walletMapper.toDto(walletRepository.save(wallet));
-		} catch (PaymentServiceException e) {
-			throw new RuntimeException("Recharge failed.", e);
-		}
+		thirdPartyPaymentService.charge(amount);
+		Wallet wallet = walletRepository.findOne(walletId);
+		wallet.setBalance(wallet.getBalance().add(amount));
+		return walletMapper.toDto(walletRepository.save(wallet));
 	}
 	
 }

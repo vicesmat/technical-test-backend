@@ -10,6 +10,7 @@ import com.playtomic.tests.wallet.service.mapper.WalletMapper;
 
 @Service
 public class WalletServiceImpl implements WalletService {
+	
     @Autowired
     WalletRepository walletRepository;
     
