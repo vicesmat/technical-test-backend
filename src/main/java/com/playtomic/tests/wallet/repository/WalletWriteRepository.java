@@ -1,5 +1,7 @@
 package com.playtomic.tests.wallet.repository;
 
+import java.util.Optional;
+
 import javax.persistence.LockModeType;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,6 +14,6 @@ import com.playtomic.tests.wallet.repository.entity.Wallet;
 public interface WalletWriteRepository extends JpaRepository<Wallet, Long> {
 	
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
-	public Wallet findById(Long customerId);
+	public Optional<Wallet> findById(Long customerId);
 	
 }

@@ -6,4 +6,6 @@ public interface PaymentService {
 	
     public void charge(BigDecimal amount);
     
+    public void pay(BigDecimal amount);
+    
 }

@@ -1,8 +1,9 @@
 package com.playtomic.tests.wallet.service.impl;
 
 import java.math.BigDecimal;
-import java.text.NumberFormat;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.playtomic.tests.wallet.service.PaymentService;
@@ -17,15 +18,21 @@ import com.playtomic.tests.wallet.service.exception.PaymentServiceException;
 @Service
 public class ThirdPartyPaymentServiceImpl implements PaymentService {
 	
+	private Logger log = LoggerFactory.getLogger(ThirdPartyPaymentServiceImpl.class);
+	
     private BigDecimal threshold = new BigDecimal(10);
 
     @Override
     public void charge(BigDecimal amount) {
+    	log.info("Charging {} from third party", amount);
         if (amount.compareTo(threshold) < 0) {
-        	String thresholdStr = NumberFormat.getCurrencyInstance().format(threshold);
-        	String message = String.format("We don't even bother to charge less than %s", thresholdStr);
-            throw new PaymentServiceException(message);
+        	throw new PaymentServiceException("The third party doesn't even bother to charge less than %s", threshold);
         }
+    }
+    
+    @Override
+    public void pay(BigDecimal amount) {
+    	log.info("Paying {} to external service", amount);
     }
     
 }
