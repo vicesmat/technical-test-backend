@@ -36,6 +36,7 @@ public class WalletController {
     
     @GetMapping("/{id}")
     WalletDto getWalletById(@PathVariable @NotNull Long id) {
+    	log.info("Getting wallet {}", id);
     	WalletDto walletDto = walletService.getWalletById(id);
     	
     	walletDto.add(getWalletLink(id, true));
@@ -47,6 +48,7 @@ public class WalletController {
     
     @PostMapping("/{id}/payments")
     WalletDto charge(@PathVariable @NotNull Long id, @RequestBody @Valid OperationDto operation) {
+    	log.info("Charging {} to wallet {}", operation.getAmount(), id);
     	WalletDto walletDto = walletService.charge(id, operation.getAmount());
 
     	walletDto.add(getPaymentLink(id, true));
@@ -57,6 +59,7 @@ public class WalletController {
     
     @PostMapping("/{id}/top-ups")
     WalletDto recharge(@PathVariable @NotNull Long id, @RequestBody @Valid OperationDto operation) {
+    	log.info("Recharging {} to wallet {}", operation.getAmount(), id);
     	WalletDto walletDto = walletService.recharge(id, operation.getAmount());
     	
     	walletDto.add(getTopupLink(id, true));

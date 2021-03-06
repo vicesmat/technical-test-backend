@@ -68,5 +68,10 @@ public class Wallet {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "Wallet [id=" + id + ", balance=" + balance + "]";
+	}
 	
 }

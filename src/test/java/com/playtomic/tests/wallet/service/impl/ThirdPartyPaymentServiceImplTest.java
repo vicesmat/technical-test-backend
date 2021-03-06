@@ -1,14 +1,15 @@
 package com.playtomic.tests.wallet.service.impl;
 
 
-import com.playtomic.tests.wallet.service.PaymentServiceException;
 import org.junit.Test;
+
+import com.playtomic.tests.wallet.service.exception.PaymentServiceException;
 
 import java.math.BigDecimal;
 
-public class ThirdPartyPaymentServiceTest {
+public class ThirdPartyPaymentServiceImplTest {
 
-    ThirdPartyPaymentService s = new ThirdPartyPaymentService();
+    ThirdPartyPaymentServiceImpl s = new ThirdPartyPaymentServiceImpl();
 
     @Test(expected = PaymentServiceException.class)
     public void test_exception() throws PaymentServiceException {

@@ -9,8 +9,9 @@ import org.springframework.stereotype.Service;
 import com.playtomic.tests.wallet.api.dto.WalletDto;
 import com.playtomic.tests.wallet.repository.WalletRepository;
 import com.playtomic.tests.wallet.repository.entity.Wallet;
-import com.playtomic.tests.wallet.service.PaymentServiceException;
+import com.playtomic.tests.wallet.service.PaymentService;
 import com.playtomic.tests.wallet.service.WalletService;
+import com.playtomic.tests.wallet.service.exception.PaymentServiceException;
 import com.playtomic.tests.wallet.service.mapper.WalletMapper;
 
 @Service
@@ -20,7 +21,7 @@ public class WalletServiceImpl implements WalletService {
     WalletMapper walletMapper;
 	
 	@Autowired
-	ThirdPartyPaymentService thirdPartyPaymentService;
+	PaymentService paymentService;
 	
     @Autowired
     WalletRepository walletRepository;
@@ -46,7 +47,7 @@ public class WalletServiceImpl implements WalletService {
 
 	@Override
 	public WalletDto recharge(Long walletId, BigDecimal amount) {
-		thirdPartyPaymentService.charge(amount);
+		paymentService.charge(amount);
 		Wallet wallet = walletRepository.findOne(walletId);
 		wallet.setBalance(wallet.getBalance().add(amount));
 		return walletMapper.toDto(walletRepository.save(wallet));
