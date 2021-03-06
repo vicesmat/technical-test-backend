@@ -42,7 +42,7 @@ public class WalletServiceImpl implements WalletService {
 		Wallet wallet = walletWriteRepository.findById(walletId).orElseThrow(NotFoundException::new);
 		BigDecimal newBalance = wallet.getBalance().subtract(amount);
 		if (newBalance.compareTo(new BigDecimal(0)) < 0) {
-        	throw new PaymentServiceException("You're living beyond your means, you only have  %s", wallet.getBalance());
+        	throw new PaymentServiceException("You're living beyond your means, you only have %s", wallet.getBalance());
 		} else {
 			paymentService.pay(amount);
 			wallet.setBalance(newBalance);

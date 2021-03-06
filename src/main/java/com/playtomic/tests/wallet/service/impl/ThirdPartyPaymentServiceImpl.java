@@ -1,6 +1,7 @@
 package com.playtomic.tests.wallet.service.impl;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,7 @@ public class ThirdPartyPaymentServiceImpl implements PaymentService {
 
     @Override
     public void charge(BigDecimal amount) {
-    	log.info("Charging {} from third party", amount);
+    	log.info("Charging {} to third party", NumberFormat.getCurrencyInstance().format(amount));
         if (amount.compareTo(threshold) < 0) {
         	throw new PaymentServiceException("The third party doesn't even bother to charge less than %s", threshold);
         }
@@ -32,7 +33,7 @@ public class ThirdPartyPaymentServiceImpl implements PaymentService {
     
     @Override
     public void pay(BigDecimal amount) {
-    	log.info("Paying {} to external service", amount);
+    	log.info("Paying {} to external service", NumberFormat.getCurrencyInstance().format(amount));
     }
     
 }

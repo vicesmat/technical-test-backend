@@ -3,6 +3,8 @@ package com.playtomic.tests.wallet.api;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+import java.text.NumberFormat;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -48,7 +50,7 @@ public class WalletController {
     
     @PostMapping("/{id}/payments")
     WalletDto charge(@PathVariable @NotNull Long id, @RequestBody @Valid OperationDto operation) {
-    	log.info("Charging {} to wallet {}", operation.getAmount(), id);
+    	log.info("Charging {} to wallet {}", NumberFormat.getCurrencyInstance().format(operation.getAmount()), id);
     	WalletDto walletDto = walletService.charge(id, operation.getAmount());
 
     	walletDto.add(getPaymentLink(id, true));
@@ -58,8 +60,8 @@ public class WalletController {
     }
     
     @PostMapping("/{id}/top-ups")
-    WalletDto recharge(@PathVariable @NotNull Long id, @RequestBody @Valid OperationDto operation) {
-    	log.info("Recharging {} to wallet {}", operation.getAmount(), id);
+    WalletDto recharge(@PathVariable @NotNull @Valid Long id, @RequestBody @Valid OperationDto operation) {
+    	log.info("Recharging {} to wallet {}", NumberFormat.getCurrencyInstance().format(operation.getAmount()), id);
     	WalletDto walletDto = walletService.recharge(id, operation.getAmount());
     	
     	walletDto.add(getTopupLink(id, true));
