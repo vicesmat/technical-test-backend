@@ -21,7 +21,7 @@ This is of little interest, but we could mention that the service controls some 
 
 Here, taking into account a system with high concurrency, the application locks the entity every time we are going to modify it to assure high consistency. But we don't want to lock the entity if we are just reading it, we rather allow multiple readings at the same time. So, to allow this, two repositories have been created, one for writing and the other for reading. Then, if we are getting an entity to modify it, we consult the writing repository, which has this flag: "@Lock(LockModeType.PESSIMISTIC_WRITE)". But, if we just want to consult the entity, we use the read repository, which doesn't have any annotation. **Note:** In the read repository, we could have used the predefined method "findOne", but in this version of Spring, it doesn't return an Optional.
 
-Worthy of note is the use of the "@RepositoryRestResource(exported = false)" annotation. With this, we avoid that Spring Data Rest automatically creates endpoints for CRUD operations. But don't worry, you don't need them. There is a file called "data.sql" which populates the database with 3 wallets (ids: 1, 2, and 3).
+Worthy of note is the use of the "@RepositoryRestResource(exported = false)" annotation. With this, we avoid that Spring Data REST automatically creates endpoints for CRUD operations. But don't worry, you don't need them. There is a file called "data.sql" which populates the database with 3 wallets (ids: 1, 2, and 3).
 
 ## Last but not least, the miscellaneous section
 
