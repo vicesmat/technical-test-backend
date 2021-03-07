@@ -6,7 +6,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import java.text.NumberFormat;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +36,7 @@ public class WalletController {
     WalletService walletService;
     
     @GetMapping("/{id}")
-    WalletDto getWallet(@PathVariable @NotNull Long id) {
+    WalletDto getWallet(@PathVariable Long id) {
     	log.info("Getting wallet {}", id);
     	WalletDto walletDto = walletService.getWalletById(id);
     	
@@ -49,7 +48,7 @@ public class WalletController {
     }
     
     @PostMapping("/{id}/payments")
-    WalletDto charge(@PathVariable @NotNull Long id, @RequestBody @Valid OperationDto operation) {
+    WalletDto charge(@PathVariable Long id, @RequestBody @Valid OperationDto operation) {
     	log.info("Charging {} to wallet {}", NumberFormat.getCurrencyInstance().format(operation.getAmount()), id);
     	WalletDto walletDto = walletService.charge(id, operation.getAmount());
 
@@ -60,7 +59,7 @@ public class WalletController {
     }
     
     @PostMapping("/{id}/top-ups")
-    WalletDto recharge(@PathVariable @NotNull @Valid Long id, @RequestBody @Valid OperationDto operation) {
+    WalletDto recharge(@PathVariable Long id, @RequestBody @Valid OperationDto operation) {
     	log.info("Recharging {} to wallet {}", NumberFormat.getCurrencyInstance().format(operation.getAmount()), id);
     	WalletDto walletDto = walletService.recharge(id, operation.getAmount());
     	
