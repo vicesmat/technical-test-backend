@@ -1,56 +1,36 @@
-# Wallet Service
+# Solution
 
-This exercise consists of building a proof of concept of a wallet service.
+This document highlights the most important aspects of my solution to the proposed exercise.
 
-A wallet should work as a real purse:
-- It stores a balance in euros. The owner can use this amount to pay for other services.
-- The owner can recharge it (top-up) using a third-party payments platform (stripe, paypal, redsys, ...).
-- There is no possibility to refund this money to the original payment method.
+## Let's start with the controller
 
-The basic structure of a wallet is its identifier and its current balance. If you think you need more fields,  just add them. We will discuss it in the interview. There are no wrong answers, we just want a starting point for a conversation.
+### API RESTful
+To comply with API Rest principles, the application defines the API by using nouns instead of verbs (e.g. "/payments" instead of "/charge"). Also, HATEOAS has been implemented to help to "discover" which resources are available. Apart from this, Swagger is configured to document all the endpoints (you can check it in [http://localhost:8090/swagger-ui.html#/](http://localhost:8090/swagger-ui.html#/)).
 
-For this exercise, you have to build endpoints for:
-- Query a wallet by its identifier.
-- Subtract an amount from the wallet (that is, make a charge).
-- Recharge this wallet using a third-party platform.
+### Error management
+The application intercepts any exception by using the "@RestControllerAdvice" annotation. All the exceptions are controlled and properly redirected to the client by a unified interface (with ErrorDto). This management can be found in RestResponseExceptionHandler.java.
 
-So you can focus on these problems, you have here a maven project with a Spring Boot application. It already contains
-the basic dependencies and an H2 database. There are develop and test profiles.
+### Validations
+The controller takes into account the potential errors in the inputs by using "javax.validation".
 
-You can also find an implementation of the service that would call to the actual payments platform (ThirdPartyPaymentService).
-You don't have to code that, just assume that this service is doing a remote request to a third-party system. 
-This dummy implementation returns errors under certain conditions.
+## So now we have to talk about the service layer
 
-Take into account that this service would be working in a microservices environment and you would take care of high concurrency.
+This is of little interest, but we could mention that the service controls some scenarios (e.g. inexistent wallet ID or insufficient balance). Besides, the mapping between entities and DTOs is made by the MapStruct library. **Note:** Be aware of the fact that MapStruct creates the implementation of the mappers when compiling.
 
-You can spend as much time as you need. We think you should not invest more than 3-4.
-You don't have to document your code, but you can write down anything you want to explain or anything you have skipped.
+## That was brief, let's continue with the repository layer
 
+Here, taking into account a system with high concurrency, the application locks the entity every time we are going to modify it to assure high consistency. But we don't want to lock the entity if we are just reading it, we rather allow multiple readings at the same time. So, to allow this, two repositories have been created, one for writing and the other for reading. Then, if we are getting an entity to modify it, we consult the writing repository, which has this flag: "@Lock(LockModeType.PESSIMISTIC_WRITE)". But, if we just want to consult the entity, we use the read repository, which doesn't have any annotation. **Note:** In the read repository, we could have used the predefined method "findOne", but in this version of Spring, it doesn't return an Optional.
 
-# Servicio de bono monedero
+Worthy of note is the use of the "@RepositoryRestResource(exported = false)" annotation. With this, we avoid that Spring Data Rest automatically creates endpoints for CRUD operations. But don't worry, you don't need them. There is a file called "data.sql" which populates the database with 3 wallets (ids: 1, 2, and 3).
 
-El ejercicio consiste en construir una prueba de concepto de un servicio de bono monedero.
-El bono monedero funciona como un monedero "real":
-- Almacena un saldo en euros, que el usuario puede utilizar para pagar otros servicios.
-- El usuario puede recargar dinero desde una pasarela de pagos de terceros (stripe, paypal, redsys...).
-- No existe la posibilidad de devolver ese dinero al medio de pago original.
+## Last but not least, the miscellaneous section
 
-La estructura básica del monedero es su identificador y su saldo actual. Si consideras que necesitas más campos,
-añádelos sin problemas y lo discutiremos en la entrevista.
+### Logging
+Apart from the logs defined explicitly, the application uses AspectJ to intercept every save from the repository layer to show the changes in the database.
 
-El ejercicio consiste en que programes endpoints para:
-- Consultar un bono por su identificador.
-- Descontar saldo del monedero (un cobro).
-- Recargar dinero en ese bono a través de un servicio de pago de terceros.
+### Testing
+For unit testing, I have partially covered the functionality to demonstrate testing in controller and service layers. In particular, I tested the following methods:
+- WalletController.getWallet(...)
+- WalletService.charge(...)
 
-Para que puedas ir al grano, te damos un proyecto maven con una aplicación Spring Boot, con las dependencias básicas y una
-base de datos H2. Tienes perfiles de develop y test.
-
-Tienes también una implementación del servicio que implementaría la pasarela de pago real (ThirdPartyPaymentService).
-Esa parte no tienes que programarla, asume que el servicio hace la llamada remota dada una cantidad de dinero.
-Está pensado para que devuelva error bajo ciertas condiciones.
-
-Ten en cuenta que es un servicio que conviviría en un entorno de microservicios y alta concurrencia.
-
-Le puedes dedicar el tiempo que quieras, pero hemos estimado que 3-4 horas es suficiente para demostrar  [los requisitos del puesto.](OFERTA.md#requisitos)
- No hace falta que lo documentes pero puedes anotar todo lo que quieras como explicación o justificación de lo que hagas o dejes sin hacer.
+For controllers, I used the MockMvc class. And for both layers, I used BDDMockito (a super cool way of using Mockito with BDD style).

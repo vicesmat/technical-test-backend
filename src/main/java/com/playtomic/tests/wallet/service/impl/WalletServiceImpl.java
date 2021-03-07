@@ -52,8 +52,8 @@ public class WalletServiceImpl implements WalletService {
 
 	@Override
 	public WalletDto recharge(Long walletId, BigDecimal amount) {
-		paymentService.charge(amount);
 		Wallet wallet = walletWriteRepository.findById(walletId).orElseThrow(NotFoundException::new);
+		paymentService.charge(amount);
 		wallet.setBalance(wallet.getBalance().add(amount));
 		return walletMapper.toDto(walletWriteRepository.save(wallet));
 	}
