@@ -37,7 +37,7 @@ public class WalletController {
     WalletService walletService;
     
     @GetMapping("/{id}")
-    WalletDto getWalletById(@PathVariable @NotNull Long id) {
+    WalletDto getWallet(@PathVariable @NotNull Long id) {
     	log.info("Getting wallet {}", id);
     	WalletDto walletDto = walletService.getWalletById(id);
     	
@@ -71,7 +71,7 @@ public class WalletController {
     }
     
     private Link getWalletLink(Long id, boolean isSelf) {
-    	ControllerLinkBuilder builder = linkTo(methodOn(WalletController.class).getWalletById(id));
+    	ControllerLinkBuilder builder = linkTo(methodOn(WalletController.class).getWallet(id));
     	return isSelf ? builder.withSelfRel() : builder.withRel("wallet");
     }
     
