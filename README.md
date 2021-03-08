@@ -25,6 +25,9 @@ Worthy of note is the use of the "@RepositoryRestResource(exported = false)" ann
 
 ## Last but not least, the miscellaneous section
 
+### Lombok
+I could have used Lombok to achieve a cleaner code. However, I preferred to simplify the configuration of the IDE for this exercise to avoid potential problems executing it.
+
 ### Logging
 Apart from the logs defined explicitly, the application uses AspectJ to intercept every save from the repository layer to show the changes in the database.
 
